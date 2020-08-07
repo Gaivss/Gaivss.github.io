@@ -335,7 +335,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-08-06
+                    2020-08-08
                 </div>
                 
 
@@ -351,103 +351,297 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="链表的应用-约瑟夫环"><a href="#链表的应用-约瑟夫环" class="headerlink" title="链表的应用-约瑟夫环"></a>链表的应用-约瑟夫环</h1><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><pre><code>根据算法(--0 + index) % 链表有效数据长度</code></pre>
-<pre><code class="java">public class JosePhusNode &amp;#123;
-    private int no;
-    private int pwd;
-    public JosePhusNode(int no,int pwd)&amp;#123;
-        this.no = no;
-        this.pwd = pwd;
-    &amp;#125;
+                <h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><h4 id="栈的定义：栈始终特殊的线性表-只允许表的一端进行插入和删除操作"><a href="#栈的定义：栈始终特殊的线性表-只允许表的一端进行插入和删除操作" class="headerlink" title="栈的定义：栈始终特殊的线性表 只允许表的一端进行插入和删除操作"></a>栈的定义：栈始终特殊的线性表 只允许表的一端进行插入和删除操作</h4><h4 id="栈的特征：后进先出"><a href="#栈的特征：后进先出" class="headerlink" title="栈的特征：后进先出"></a>栈的特征：后进先出</h4><h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code class="java">public interface IStack&lt;E&gt; &amp;#123;
 
-
-    public int getNo() &amp;#123;
-        return no;
-    &amp;#125;
-
-    public void setNo(int no) &amp;#123;
-        this.no = no;
-    &amp;#125;
-
-    public int getPwd() &amp;#123;
-        return pwd;
-    &amp;#125;
-
-    public void setPwd(int pwd) &amp;#123;
-        this.pwd = pwd;
-    &amp;#125;
+    E push(E item);         //入栈
+    E pop();                //出栈
+    E peek();               //去栈顶元素
+    int size();             //返回栈中元素的个数
+    boolean empty();        //判断栈是否空
+    void list();
 &amp;#125;
+</code></pre>
+<p>顺序栈</p>
+<pre><code class="java">public class SingleList&lt;E&gt; implements IList&lt;E&gt; &amp;#123;
 
-public interface IList&lt;E&gt; &amp;#123;
 
-    boolean addNode(E item);            //添加元素
-    boolean addNode(int i, E item);     //插入元素
-    E remove(int i);                    //删除元素
-    int index(E item);                  //定位元素
-    E getNode(int i);                   //获取元素
-    int size();                         //求链表长度
-    void clear();                       //清空链表
-    boolean isEmpty();                  //判断线性表是否为空
-    void list();                        //遍历数组
 
-&amp;#125;
+    private Node&lt;E&gt; start;     //单链表头引用
+    private int size = 0;          //链表长度
 
-public class JosePhus &amp;#123;
-    IList&lt;JosePhusNode&gt; circle;   //约瑟夫环
-    int size;
 
-    public JosePhus(int[][] data)&amp;#123;
-        size = data.length;
-        circle = new SingleList&lt;&gt;();
-        for(int i=0; i&lt;size; i++)&amp;#123;
-            circle.addNode(new JosePhusNode(data[i][0],data[i][1]));   // [no][pwd]
+    private static class Node&lt;E&gt;&amp;#123;
+        E item;
+        Node&lt;E&gt; next;
+        Node(E item,Node&lt;E&gt; next)&amp;#123;
+            this.item = item;
+            this.next = next;
         &amp;#125;
     &amp;#125;
 
-    //初始
-    public JosePhus(int size)&amp;#123;
-        circle = new SingleList&lt;&gt;();
-        this.size = size;
-        int pwd;
-        for(int i = 1; i&lt;=size; i++)&amp;#123;
-            //为每人生成密码
-            pwd = (int)(Math.random()*5)+1;
-            circle.addNode(new JosePhusNode(i,pwd));
+    /**
+     * 添加元素到末尾
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean addNode(E item) &amp;#123;
+        if(item == null)&amp;#123;
+            throw new RuntimeException(&quot;参数不能为空&quot;);
+        &amp;#125;
+        if(start == null)&amp;#123;
+            start =  new Node&lt;&gt;(item,null);
+            size++;
+            return true;
+        &amp;#125;else&amp;#123;
+            Node&lt;E&gt; current = start;
+            while (current.next != null)&amp;#123;
+                current = current.next;
+            &amp;#125;
+            current.next = new Node&lt;&gt;(item,null);
+            size++;
+            return true;
         &amp;#125;
     &amp;#125;
 
 
-    //输出约瑟夫环
-    public void printcircle()&amp;#123;
-        for(int i=0; i&lt;size; i++)&amp;#123;
-            System.out.print(&quot;(&quot; + circle.getNode(i).getNo() +&quot;,&quot; + circle.getNode(i).getPwd() + &quot;)&quot;);
+    /**
+     * 插入数据
+     * @param i
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean addNode(int i, E item) &amp;#123;
+        Node&lt;E&gt; current;   //当前前一个节点
+        Node&lt;E&gt; previous;  //前个节点一个节点
+        if(i&lt;0||i&gt;size)&amp;#123;
+            throw  new RuntimeException(&quot;添加失败&quot;);
         &amp;#125;
+        Node&lt;E&gt; newNode = new Node&lt;&gt;(item,null);
+        if(i == 0)&amp;#123; //空链表或者在第一个元素前插入元素
+            newNode.next = start;
+            start = newNode;
+            size++;
+        &amp;#125;else &amp;#123;// 中间插入
+            current = start;
+            previous = null;
+            int j = 0;        //记录第几个元素
+            while (current!= null &amp;&amp; j&lt;i)&amp;#123;
+                previous = current;
+                current = current.next;
+                j++;
+            &amp;#125;
+            if(j == i)&amp;#123;
+                previous.next = newNode;
+                newNode.next = current;
+                size++;
+            &amp;#125;
+        &amp;#125;
+        return true;
     &amp;#125;
 
-    //出环
-    public void startgame()&amp;#123;
-        int index = 0;
-        JosePhusNode node = circle.getNode(0);
-        for(int i=1; i&lt;=size; i++)&amp;#123;
-            index = (--index + node.getPwd()) % circle.size();
-            System.out.println(&quot;index:&quot; + index + &quot; size:&quot; + circle.size());
-            node = circle.remove(index);
-            System.out.println(&quot;(&quot; + node.getNo() + &quot;,&quot; + node.getPwd() + &quot;)出列&quot;);
+    /**
+     * 根据 索引删除
+     * @param i
+     * @return
+     */
+    @Override
+    public E remove(int i) &amp;#123;
+        E oldValue = null;
+        if(isEmpty() || i &lt; 0 || i &gt; size - 1)&amp;#123;
+            throw new RuntimeException(&quot;索引越界&quot;);
+        &amp;#125;
+        Node&lt;E&gt; current = start;
+        if(i == 0)&amp;#123;  //第一个元素
+            oldValue = current.item;
+            start = current.next;
+            size--;
+        &amp;#125;else&amp;#123;
+            Node&lt;E&gt; previous = null;
+            int j = 1;
+            while (current.next !=null &amp;&amp; j&lt;=i)&amp;#123;
+                previous = current;
+                current = current.next;
+                j++;
+            &amp;#125;
+            previous.next = current.next;   // 10   current    11     10.next = current.next
+            oldValue = current.item;
+            current = null;
+            size--;
+        &amp;#125;
+        return oldValue;
+    &amp;#125;
+
+    /**
+     * 根据元素查找索引
+     * @param item
+     * @return
+     */
+    @Override
+    public int index(E item) &amp;#123;
+        int i = 0;
+        if(item == null)&amp;#123;
+            for(Node&lt;E&gt; current = start; current!=null; current=current.next)&amp;#123;
+                if(current.item == null)&amp;#123;
+                    return i;
+                &amp;#125;
+                i++;
+            &amp;#125;
+        &amp;#125;else&amp;#123;
+            for(Node&lt;E&gt; current = start; current!=null; current=current.next)&amp;#123;
+                if(item.equals(current.item))&amp;#123;
+                    return i;
+                &amp;#125;
+                i++;
+            &amp;#125;
+        &amp;#125;
+        throw new RuntimeException(&quot;没有匹配项&quot;);
+    &amp;#125;
+
+    @Override
+    public E getNode(int i) &amp;#123;
+        E item = null;
+        if(isEmpty() || i &lt; 0 || i &gt; size -1)&amp;#123;
+            throw new RuntimeException(&quot;索引越界&quot;);
+        &amp;#125;
+        Node&lt;E&gt; current = start;
+        int j = 0;
+        while (current.next != null &amp;&amp; j&lt;i)&amp;#123;
+            current = current.next;
+            j++;
+        &amp;#125;
+        if(j == i)&amp;#123;
+            item = current.item;
+            return item;
+        &amp;#125;else &amp;#123;
+            throw new RuntimeException(&quot;索引失败&quot;);
+        &amp;#125;
+
+    &amp;#125;
+
+    @Override
+    public int size() &amp;#123;
+        return size;
+    &amp;#125;
+
+    @Override
+    public void clear() &amp;#123;
+        for(Node&lt;E&gt; current = start; current!=null;)&amp;#123;
+            Node&lt;E&gt; next = current.next;
+            current.item = null;
+            current.next = null;
+            current = next;
+        &amp;#125;
+        start = null;
+        size = 0;
+    &amp;#125;
+
+    @Override
+    public boolean isEmpty() &amp;#123;
+        return size == 0;
+    &amp;#125;
+
+    @Override
+    public void list() &amp;#123;
+        Node&lt;E&gt; current = start;
+        while(current!=null)&amp;#123;
+            System.out.print(current.item + &quot;  &quot;);
+             current =  current.next;
         &amp;#125;
     &amp;#125;
-&amp;#125;
- class TestJosephus&amp;#123;
-     public static void main(String[] args) &amp;#123;
-         JosePhus jsf;
-         System.out.println(&quot;--给定初始密码的约瑟夫环--&quot;);
-//         int[][] data = &amp;#123;&amp;#123;1,1&amp;#125;, &amp;#123;2,4&amp;#125;,&amp;#123;3,4&amp;#125;,&amp;#123;4,3&amp;#125;,&amp;#123;5,1&amp;#125;,&amp;#123;6,1&amp;#125;,&amp;#123;7,5&amp;#125;,&amp;#123;8,5&amp;#125;,&amp;#123;9,1&amp;#125;,&amp;#123;10,5&amp;#125;,&amp;#123;11,1&amp;#125;,&amp;#123;12,3&amp;#125;&amp;#125;;
-         jsf = new JosePhus(12);
-         System.out.println(&quot;显示约瑟夫环&quot;);
-         jsf.printcircle();
-         System.out.println(&quot;\n&quot;);
-         System.out.println(&quot;显示出队顺序&quot;);
-         jsf.startgame();
-     &amp;#125;
+&amp;#125;</code></pre>
+<p>链表栈</p>
+<pre><code class="java">public class LinkStack&lt;E&gt; implements IStack&lt;E&gt; &amp;#123;
+
+    private StackNode&lt;E&gt; top;    //栈顶
+    private int size;            //栈中节点个数
+
+
+
+    public LinkStack()&amp;#123;
+        top = null;
+        size = 0;
+    &amp;#125;
+
+    /**
+     * 入栈
+     * @param item
+     * @return
+     */
+    @Override
+    public E push(E item) &amp;#123;
+        StackNode&lt;E&gt; newNode = new StackNode&lt;&gt;(item);
+        if(!empty())&amp;#123;
+            newNode.setNext(top);
+        &amp;#125;
+        top = newNode;
+        size++;
+
+        return item;
+
+    &amp;#125;
+
+    /**
+     * 出栈操作
+     * @return
+     */
+    @Override
+    public E pop() &amp;#123;
+        if(!empty())&amp;#123;
+            E item = null;
+            item = top.getData();
+            top = top.getNext();
+            size--;
+            return item;
+        &amp;#125;
+        throw  new RuntimeException(&quot;pop()未知错误&quot;);
+    &amp;#125;
+
+    /**
+     * 取出栈顶元素
+     * @return
+     */
+    @Override
+    public E peek() &amp;#123;
+        if(!empty())&amp;#123;
+            E item = top.getData();
+            return item;
+        &amp;#125;
+        throw  new RuntimeException(&quot;peek()未知错误&quot;);
+    &amp;#125;
+
+    @Override
+    public int size() &amp;#123;
+        return size;
+    &amp;#125;
+
+    @Override
+    public boolean empty() &amp;#123;
+        if(top == null &amp;&amp; (size == 0))&amp;#123;
+            return true;
+        &amp;#125;
+        return false;
+    &amp;#125;
+
+    @Override
+    public void list() &amp;#123;
+        if(empty())&amp;#123;
+            throw new RuntimeException(&quot;list()未知错误&quot;);
+        &amp;#125;else&amp;#123;
+            StackNode&lt;E&gt; current = top;
+            LinkStack&lt;E&gt; newLinkStack = new LinkStack&lt;&gt;();
+           while (current!=null)&amp;#123;
+                newLinkStack.push(current.getData());
+                current = current.getNext();
+            &amp;#125;
+            current = newLinkStack.top;
+           while (current!=null)&amp;#123;
+               System.out.println(current.getData());
+               current = current.getNext();
+           &amp;#125;
+        &amp;#125;
+    &amp;#125;
 &amp;#125;</code></pre>
 
             </div>
@@ -474,7 +668,7 @@ public class JosePhus &amp;#123;
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://Gaivss.github.io/2020/08/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8%E7%9A%84%E5%BA%94%E7%94%A8-%E7%BA%A6%E7%91%9F%E5%A4%AB%E7%8E%AF/">https://Gaivss.github.io/2020/08/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%93%BE%E8%A1%A8%E7%9A%84%E5%BA%94%E7%94%A8-%E7%BA%A6%E7%91%9F%E5%A4%AB%E7%8E%AF/</a>
+                    <a href="https://Gaivss.github.io/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88/">https://Gaivss.github.io/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -548,9 +742,50 @@ public class JosePhus &amp;#123;
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
+                        
+                        <span class="card-title"></span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            栈栈的定义：栈始终特殊的线性表 只允许表的一端进行插入和删除操作栈的特征：后进先出代码实现public interface IStack&lt;E&gt; &amp;#123;
+
+    E push(E item);         //
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-08
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Saki
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E7%9A%84%E5%BA%94%E7%94%A8-%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
                     <div class="card-image">
@@ -574,49 +809,8 @@ public class JosePhus &amp;#123;
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-08-08
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            Saki
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/08/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E9%98%9F%E5%88%97/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            队列基本介绍    队列是种特性线性表，先进先出
-案例说明    银行排队叫号，客户取服务序号，柜员呼叫客户
-代码实现public interface IQueue&lt;E&gt; &amp;#123;
-
-    boolean addQ
-                        
-                    </div>
-                    <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-05
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-08
                             </span>
                         <span class="publish-author">
                             
