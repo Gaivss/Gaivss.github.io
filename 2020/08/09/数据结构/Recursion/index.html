@@ -335,7 +335,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-08-08
+                    2020-08-09
                 </div>
                 
 
@@ -351,296 +351,94 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><h4 id="栈的定义：栈始终特殊的线性表-只允许表的一端进行插入和删除操作"><a href="#栈的定义：栈始终特殊的线性表-只允许表的一端进行插入和删除操作" class="headerlink" title="栈的定义：栈始终特殊的线性表 只允许表的一端进行插入和删除操作"></a>栈的定义：栈始终特殊的线性表 只允许表的一端进行插入和删除操作</h4><h4 id="栈的特征：后进先出"><a href="#栈的特征：后进先出" class="headerlink" title="栈的特征：后进先出"></a>栈的特征：后进先出</h4><h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><pre><code class="java">public interface IStack&lt;E&gt; &amp;#123;
-
-    E push(E item);         //入栈
-    E pop();                //出栈
-    E peek();               //去栈顶元素
-    int size();             //返回栈中元素的个数
-    boolean empty();        //判断栈是否空
-    void list();
-&amp;#125;
-</code></pre>
-<p>顺序栈</p>
-<pre><code class="java">public class SingleList&lt;E&gt; implements IList&lt;E&gt; &amp;#123;
-
-
-
-    private Node&lt;E&gt; start;     //单链表头引用
-    private int size = 0;          //链表长度
-
-
-    private static class Node&lt;E&gt;&amp;#123;
-        E item;
-        Node&lt;E&gt; next;
-        Node(E item,Node&lt;E&gt; next)&amp;#123;
-            this.item = item;
-            this.next = next;
-        &amp;#125;
-    &amp;#125;
-
-    /**
-     * 添加元素到末尾
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean addNode(E item) &amp;#123;
-        if(item == null)&amp;#123;
-            throw new RuntimeException(&quot;参数不能为空&quot;);
-        &amp;#125;
-        if(start == null)&amp;#123;
-            start =  new Node&lt;&gt;(item,null);
-            size++;
-            return true;
+                <h1 id="递归-回溯法"><a href="#递归-回溯法" class="headerlink" title="递归-回溯法"></a>递归-回溯法</h1><h4 id="递归调用规则："><a href="#递归调用规则：" class="headerlink" title="递归调用规则："></a>递归调用规则：</h4><pre><code>1. 每当程序执行一个方法时，就会开辟一个独立空间栈，如果不设置结束递归的条件，就会导致栈溢出
+2. 每个空间的数据(局部变量)，是独立</code></pre>
+<h4 id="回溯法基本思想：回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。"><a href="#回溯法基本思想：回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。" class="headerlink" title="回溯法基本思想：回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。"></a>回溯法基本思想：回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。</h4><h4 id="迷宫问题"><a href="#迷宫问题" class="headerlink" title="迷宫问题"></a>迷宫问题</h4><p>map[] 是迷宫地图<br>0，表示可用走的路,1，表示墙 2,表示已走的路  3,表示已走但不通的路</p>
+<pre><code class="java">public static boolean setWay(int[][] map, int x, int y)&amp;#123;
+        if(map[7][6] == 2)&amp;#123;
+            for(int i=0;i&lt;map.length;i++)&amp;#123;
+                for(int j=0;j&lt;map[0].length;j++)&amp;#123;
+                    System.out.print(map[i][j] + &quot; &quot;);
+                &amp;#125;
+                System.out.println();
+            &amp;#125;
+            System.out.println(&quot;已到达终点&quot;);
+        &amp;#125;else if(map[x][y] == 0)&amp;#123;
+            map[x][y] = 2;
+            if(setWay(map,x+1,y))&amp;#123;    //向下
+                return true;
+            &amp;#125;else if(setWay(map,x,y+1))&amp;#123; //向右
+                return true;
+            &amp;#125;else if(setWay(map,x-1 ,y))&amp;#123; //向上
+                return true;
+            &amp;#125;else if(setWay(map,x,y-1))&amp;#123; // 向左
+                return true;
+            &amp;#125;else&amp;#123;  //上下左右都为墙的 返回false
+                map[x][y] = 3;
+                return false;
+            &amp;#125;
         &amp;#125;else&amp;#123;
-            Node&lt;E&gt; current = start;
-            while (current.next != null)&amp;#123;
-                current = current.next;
+            return false;
+        &amp;#125;
+        return true;
+    &amp;#125;
+&amp;#125;</code></pre>
+<p>八皇后</p>
+<pre><code class="java">public class Queen &amp;#123;
+    int max = 9;
+    int[] array = new int[max];
+    static int count = 0;
+    static int clashcount = 0;
+    public static void main(String[] args) &amp;#123;
+        Queen queen = new Queen();
+        queen.start();
+        System.out.println(count);
+        System.out.printf(&quot;冲突判断%d次&quot;,clashcount);
+    &amp;#125;
+
+    public void start()&amp;#123;
+        check(0);
+    &amp;#125;
+
+    /**
+     * 放置皇后
+     * @param n 第几次放皇后  n又代表第几行 一行只能放一个皇后
+     */
+    private void check(int n)&amp;#123;
+        if(n == max)&amp;#123;
+            print();
+            return;
+        &amp;#125;
+        for(int i=0; i &lt; max;i++)&amp;#123; //i 表示第n个 皇后放在第i列   i表示第几列
+            array[n] = i;
+            if(clash(n))&amp;#123; //不冲突
+                check(n+1);  //开始递归
             &amp;#125;
-            current.next = new Node&lt;&gt;(item,null);
-            size++;
-            return true;
         &amp;#125;
     &amp;#125;
 
-
     /**
-     * 插入数据
-     * @param i
-     * @param item
+     * 判断放置皇后是否冲突
+     * @param n  第几个
      * @return
      */
-    @Override
-    public boolean addNode(int i, E item) &amp;#123;
-        Node&lt;E&gt; current;   //当前前一个节点
-        Node&lt;E&gt; previous;  //前个节点一个节点
-        if(i&lt;0||i&gt;size)&amp;#123;
-            throw  new RuntimeException(&quot;添加失败&quot;);
-        &amp;#125;
-        Node&lt;E&gt; newNode = new Node&lt;&gt;(item,null);
-        if(i == 0)&amp;#123; //空链表或者在第一个元素前插入元素
-            newNode.next = start;
-            start = newNode;
-            size++;
-        &amp;#125;else &amp;#123;// 中间插入
-            current = start;
-            previous = null;
-            int j = 0;        //记录第几个元素
-            while (current!= null &amp;&amp; j&lt;i)&amp;#123;
-                previous = current;
-                current = current.next;
-                j++;
-            &amp;#125;
-            if(j == i)&amp;#123;
-                previous.next = newNode;
-                newNode.next = current;
-                size++;
-            &amp;#125;
+    private boolean clash(int n)&amp;#123;
+        clashcount++;
+        for(int i=0; i &lt; n; i++)&amp;#123;
+            //array[i] == array[n] 是判断同列是否在同一列
+            // Math.abs(n-i) == Math.abs(array[n]-array[i])是判断同一斜线
+            if(array[i] == array[n] || Math.abs(n-i) == Math.abs(array[n]-array[i]))
+                return false;
         &amp;#125;
         return true;
     &amp;#125;
 
-    /**
-     * 根据 索引删除
-     * @param i
-     * @return
-     */
-    @Override
-    public E remove(int i) &amp;#123;
-        E oldValue = null;
-        if(isEmpty() || i &lt; 0 || i &gt; size - 1)&amp;#123;
-            throw new RuntimeException(&quot;索引越界&quot;);
+    private void print()&amp;#123;
+        for(int i=0; i&lt;array.length;i++)&amp;#123;
+            System.out.print(array[i] + &quot; &quot;);
         &amp;#125;
-        Node&lt;E&gt; current = start;
-        if(i == 0)&amp;#123;  //第一个元素
-            oldValue = current.item;
-            start = current.next;
-            size--;
-        &amp;#125;else&amp;#123;
-            Node&lt;E&gt; previous = null;
-            int j = 1;
-            while (current.next !=null &amp;&amp; j&lt;=i)&amp;#123;
-                previous = current;
-                current = current.next;
-                j++;
-            &amp;#125;
-            previous.next = current.next;   // 10   current    11     10.next = current.next
-            oldValue = current.item;
-            current = null;
-            size--;
-        &amp;#125;
-        return oldValue;
-    &amp;#125;
-
-    /**
-     * 根据元素查找索引
-     * @param item
-     * @return
-     */
-    @Override
-    public int index(E item) &amp;#123;
-        int i = 0;
-        if(item == null)&amp;#123;
-            for(Node&lt;E&gt; current = start; current!=null; current=current.next)&amp;#123;
-                if(current.item == null)&amp;#123;
-                    return i;
-                &amp;#125;
-                i++;
-            &amp;#125;
-        &amp;#125;else&amp;#123;
-            for(Node&lt;E&gt; current = start; current!=null; current=current.next)&amp;#123;
-                if(item.equals(current.item))&amp;#123;
-                    return i;
-                &amp;#125;
-                i++;
-            &amp;#125;
-        &amp;#125;
-        throw new RuntimeException(&quot;没有匹配项&quot;);
-    &amp;#125;
-
-    @Override
-    public E getNode(int i) &amp;#123;
-        E item = null;
-        if(isEmpty() || i &lt; 0 || i &gt; size -1)&amp;#123;
-            throw new RuntimeException(&quot;索引越界&quot;);
-        &amp;#125;
-        Node&lt;E&gt; current = start;
-        int j = 0;
-        while (current.next != null &amp;&amp; j&lt;i)&amp;#123;
-            current = current.next;
-            j++;
-        &amp;#125;
-        if(j == i)&amp;#123;
-            item = current.item;
-            return item;
-        &amp;#125;else &amp;#123;
-            throw new RuntimeException(&quot;索引失败&quot;);
-        &amp;#125;
-
-    &amp;#125;
-
-    @Override
-    public int size() &amp;#123;
-        return size;
-    &amp;#125;
-
-    @Override
-    public void clear() &amp;#123;
-        for(Node&lt;E&gt; current = start; current!=null;)&amp;#123;
-            Node&lt;E&gt; next = current.next;
-            current.item = null;
-            current.next = null;
-            current = next;
-        &amp;#125;
-        start = null;
-        size = 0;
-    &amp;#125;
-
-    @Override
-    public boolean isEmpty() &amp;#123;
-        return size == 0;
-    &amp;#125;
-
-    @Override
-    public void list() &amp;#123;
-        Node&lt;E&gt; current = start;
-        while(current!=null)&amp;#123;
-            System.out.print(current.item + &quot;  &quot;);
-             current =  current.next;
-        &amp;#125;
-    &amp;#125;
-&amp;#125;</code></pre>
-<p>链表栈</p>
-<pre><code class="java">public class LinkStack&lt;E&gt; implements IStack&lt;E&gt; &amp;#123;
-
-    private StackNode&lt;E&gt; top;    //栈顶
-    private int size;            //栈中节点个数
-
-
-
-    public LinkStack()&amp;#123;
-        top = null;
-        size = 0;
-    &amp;#125;
-
-    /**
-     * 入栈
-     * @param item
-     * @return
-     */
-    @Override
-    public E push(E item) &amp;#123;
-        StackNode&lt;E&gt; newNode = new StackNode&lt;&gt;(item);
-        if(!empty())&amp;#123;
-            newNode.setNext(top);
-        &amp;#125;
-        top = newNode;
-        size++;
-
-        return item;
-
-    &amp;#125;
-
-    /**
-     * 出栈操作
-     * @return
-     */
-    @Override
-    public E pop() &amp;#123;
-        if(!empty())&amp;#123;
-            E item = null;
-            item = top.getData();
-            top = top.getNext();
-            size--;
-            return item;
-        &amp;#125;
-        throw  new RuntimeException(&quot;pop()未知错误&quot;);
-    &amp;#125;
-
-    /**
-     * 取出栈顶元素
-     * @return
-     */
-    @Override
-    public E peek() &amp;#123;
-        if(!empty())&amp;#123;
-            E item = top.getData();
-            return item;
-        &amp;#125;
-        throw  new RuntimeException(&quot;peek()未知错误&quot;);
-    &amp;#125;
-
-    @Override
-    public int size() &amp;#123;
-        return size;
-    &amp;#125;
-
-    @Override
-    public boolean empty() &amp;#123;
-        if(top == null &amp;&amp; (size == 0))&amp;#123;
-            return true;
-        &amp;#125;
-        return false;
-    &amp;#125;
-
-    @Override
-    public void list() &amp;#123;
-        if(empty())&amp;#123;
-            throw new RuntimeException(&quot;list()未知错误&quot;);
-        &amp;#125;else&amp;#123;
-            StackNode&lt;E&gt; current = top;
-            LinkStack&lt;E&gt; newLinkStack = new LinkStack&lt;&gt;();
-           while (current!=null)&amp;#123;
-                newLinkStack.push(current.getData());
-                current = current.getNext();
-            &amp;#125;
-            current = newLinkStack.top;
-           while (current!=null)&amp;#123;
-               System.out.println(current.getData());
-               current = current.getNext();
-           &amp;#125;
-        &amp;#125;
+        count++;
+        System.out.println();
     &amp;#125;
 &amp;#125;</code></pre>
 
@@ -668,7 +466,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://Gaivss.github.io/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88/">https://Gaivss.github.io/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88/</a>
+                    <a href="https://Gaivss.github.io/2020/08/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/Recursion/">https://Gaivss.github.io/2020/08/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/Recursion/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -742,9 +540,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2020/08/09/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/Recursion/">
                     <div class="card-image">
@@ -764,9 +563,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-08-09
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-09
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -775,6 +574,7 @@
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -785,7 +585,7 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E7%9A%84%E5%BA%94%E7%94%A8-%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+                <a href="/2020/08/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88/">
                     <div class="card-image">
                         
                         
@@ -797,13 +597,9 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            栈的应用-逆波兰计算器
-中缀表达式：
- 是常见的运算表达式如：(8+5) X 6 -7 ，不好被计算机操作，需要判断符号优先级
+                            栈栈的定义：栈始终特殊的线性表 只允许表的一端进行插入和删除操作栈的特征：后进先出代码实现public interface IStack&lt;E&gt; &amp;#123;
 
-后缀表达式:
- 也叫波兰表达式：(8+5) X 6 -7 写成逆波兰表达式 8 5 + 6 X 7 -
- 我们
+    E push(E item);         //
                         
                     </div>
                     <div class="publish-info">
